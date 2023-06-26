@@ -45,17 +45,12 @@ if ret:
     # Resize the image mask to match the frame dimensions
     image_mask = cv2.resize(image_mask, (frame.shape[1], frame.shape[0]))
 
-    # Check if the image mask has an alpha channel
-    if image_mask.shape[2] == 4:
-        # Extract the alpha channel from the image mask
-        alpha_channel = image_mask[:, :, 3]
-
-        # Convert the alpha channel to a 3-channel mask
-        image_mask = cv2.cvtColor(alpha_channel, cv2.COLOR_GRAY2BGR)
+    # Create a 3-channel mask
+    mask = cv2.cvtColor(image_mask, cv2.COLOR_BGRA2BGR)
 
     # Apply the image mask to the frame
-    masked_frame = cv2.bitwise_and(frame, cv2.bitwise_not(image_mask))
-    masked_frame = cv2.bitwise_or(masked_frame, image_mask)
+    masked_frame = cv2.bitwise_and(frame, cv2.bitwise_not(mask))
+    masked_frame = cv2.bitwise_or(masked_frame, mask)
 
     # Save the masked frame as an image file
     output_file = 'on_ride_image.png'
