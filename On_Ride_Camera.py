@@ -23,8 +23,18 @@ while True:
     # Read a frame from the camera
     ret, frame = cap.read()
 
+    # Get the frame dimensions
+    frame_height, frame_width = frame.shape[:2]
+
+    # Calculate the text size and position for the countdown
+    text = str(countdown_remaining)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    text_size, _ = cv2.getTextSize(text, font, 3, 3)
+    text_x = int((frame_width - text_size[0]) / 2)
+    text_y = int((frame_height + text_size[1]) / 2)
+
     # Display the countdown on the frame
-    cv2.putText(frame, str(countdown_remaining), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    cv2.putText(frame, text, (text_x, text_y), font, 3, (0, 0, 255), 3)
 
     # Display the frame
     cv2.imshow('On-Ride Camera', frame)
@@ -56,9 +66,13 @@ if ret:
     output_file = 'on_ride_image.png'
     cv2.imwrite(output_file, masked_frame)
     print(f"Image captured and saved as {output_file}")
+
+    # Display the output image
+    cv2.imshow('Output Image', masked_frame)
+    cv2.waitKey(0)  # Wait for any key press
 else:
     print("Failed to capture frame")
 
-# Release the camera and close the OpenCV window
+# Release the camera and close the OpenCV windows
 cap.release()
 cv2.destroyAllWindows()
